@@ -80,6 +80,25 @@ The SIMD implementations (XMM and YMM) demonstrate a significant performance lea
 ## iii) Boundary Handling Check
 To handle vector sizes that are not perfect multiples of 4 or 8, the program implements a **scalar remainder loop**. 
 
+**Boundary Test Output ($n = 1003$)**
+<p align="center">
+  <img src="Images/C tests/boundary testing.jpg" alt="C Kernel Output 2^20" width="48%"/>
+</p>
+<p align="center">
+<em>Screenshot showing correct processing for $n=1003$, ensuring all 1003 elements are calculated regardless of register width.</em>
+</p>
+
+**Remainder Loop Implementation**
+The SIMD kernels first process elements in large blocks. Once there are fewer than 4 (XMM) or 8 (YMM) elements left, the program exits the SIMD loop and enters a scalar loop to process the remainder one by one .
+<p align="center">
+<img src="Images/C tests/boundary x.jpg" alt="XMM Remainder Loop" width="45%"/>
+&nbsp;
+<img src="Images/C tests/boundary y.jpg" alt="YMM Remainder Loop" width="45%"/>
+</p>
+<p align="center">
+<em>Assembly implementation of the scalar remainder loop for XMM (left) and YMM (right). </em>
+</p>
+
 1. The main loop processes elements using SIMD instructions in chunks.
 2. Once fewer than 4 (XMM) or 8 (YMM) elements remain, the kernel exits the SIMD loop.
 3. A scalar loop processes the remaining "boundary" elements one by one to ensure all indices are computed correctly.
