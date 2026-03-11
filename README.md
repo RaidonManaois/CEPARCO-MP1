@@ -60,7 +60,7 @@
 
 ## ii) Comparative execution-time table
 
-| Kernel / Variant | $n=2^{20}$ | $n=2^{26}$ | $n=2^{29}$ | $n=2^{29}$Performance Note
+| Kernel / Variant | $n=2^{20}$ | $n=2^{26}$ | $n=2^{29}$ | Performance Note
 |---|---:|---:|---:|---:|
 C Version1 | 0.003767 s | 0.188167 s | 0.986300 s | Baseline implementation
 x86-64 (Scalar) | 0.000867 s | 0.103533 s | 0.795233 s | Slightly faster than C
@@ -68,9 +68,11 @@ SIMD XMM | 0.000133 s | 0.045333 s | 0.366900 s | Processes 4 elements/instr
 SIMD YMM | 0.000200 s | 0.049300 s | 0.357733 s | Processes 8 elements/instr
 
 ### **Analysis of Results**
-The SIMD implementations (XMM and YMM) show a significant performance lead over the scalar C and x86-64 versions. 
-- **Scalar vs. SIMD**: SIMD versions reduce the number of loop iterations needed by processing 4 (XMM) or 8 (YMM) single-precision elements simultaneously. 
-- **XMM vs. YMM**: While YMM should theoretically be twice as fast as XMM, the execution times for $n=2^{29}$ are very close (0.3669s vs 0.3577s). This suggests that as vector size increases, the bottleneck shifts from computational throughput to memory bandwidth.
+The SIMD implementations (XMM and YMM) demonstrate a significant performance lead over the scalar C and x86-64 versions across all test cases. The performance variations observed between these kernels are driven by the following technical factors: 
+- **Instruction Level Parallelism (Scalar vs. SIMD)**: The SIMD versions are significantly faster because they process multiple data elements in a single instruction cycle—4 for XMM and 8 for YMM—whereas the C and x86-64 versions process only one element at a time. 
+- **Reduction in Loop Overhead**: By processing multiple elements per instruction, the SIMD kernels drastically reduce the total number of loop iterations needed to complete the task, thereby minimizing the branching and incrementing overhead associated with large vector sizes.
+- **Memory Bandwidth Bottleneck (XMM vs. YMM)**: While YMM should theoretically be twice as fast as XMM, the execution times for $n=2^{29}$ are very close, at 0.3669s and 0.3577s respectively. This indicates that at extremely large vector sizes, the performance becomes "memory-bound," where the bottleneck shifts from computational throughput to the speed at which data can be fetched from RAM.
+- **Compiler vs. Hand-Coded Assembly**: The x86-64 assembly performs slightly better than the C version (0.795s vs 0.986s at $n=2^{29}$). This is because hand-written assembly can often utilize registers and instruction scheduling more efficiently than a compiler's standard optimization output.
 
 ---
 
