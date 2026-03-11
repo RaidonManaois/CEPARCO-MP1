@@ -95,7 +95,9 @@ To handle vector sizes that are not perfect multiples of 4 or 8, the program imp
 - **Solution**: Verified the comparison logic ($a[i] \geq b[i]$) to ensure the SIMD masks correctly assigned 0 or 1 to match the C baseline.
 
 ### **Unique Methodology**
-- **Deterministic Initialization**: We used a specific formula ($sin$ for vector A and $cos$ for vector B) for data initialization. This provided a deterministic and documented way to verify correctness across all kernel versions.
+- **Deterministic Initialization**: For all kernel versions, the vectors were initialized using the following documented values to ensure a varied and repeatable dataset for testing correctness:
++ $A[i] = \sin(i \times 0.0005f) \times 100.0f + 50.0f$
++ $B[i] = \cos(i \times 0.0003f) \times 100.0f + 50.0f$
 
 ### **AHA Moments**
 - Realizing that while YMM registers are wider, the actual speedup over XMM is limited by how fast the CPU can fetch data from memory.
